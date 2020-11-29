@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
-// import { Controlled as CodeMirror } from "react-codemirror2";
+import { Controlled as ReactCodeMirror } from "react-codemirror2";
 import CodeMirror from "codemirror";
 import CodeMirrorConvergenceAdapter from "./codemirror-adapter";
 import { Convergence } from "@convergence/convergence";
@@ -36,6 +36,11 @@ const CONVERGENCE_URL =
   "wss://api.demo.convergence.io/realtime/convergence/examples";
 
 function App() {
+  let editRef = useRef();
+  const [code, setCode] = useState(defaultEditorContents);
+  const [myEditor, setMyEditor] = useState(null);
+  const [heheEditor, setHeheEditor] = useState(null);
+
   var convergenceExampleId = (function () {
     function createUUID() {
       let dt = new Date().getTime();
@@ -61,7 +66,9 @@ function App() {
   })();
 
   function randomDisplayName() {
-    return "User-" + Math.round(Math.random() * 10000);
+    const user = prompt("Enter your name");
+    // return "User-" + Math.round(Math.random() * 10000);
+    return user;
   }
 
   function exampleLoaded() {
@@ -84,7 +91,7 @@ function App() {
           collection: "example-codemirror",
           // collection: "codemirror-pro",
           id: convergenceExampleId,
-          data: { text: defaultEditorContents },
+          data: { text: code },
           ephemeral: true,
         });
       })
@@ -96,9 +103,22 @@ function App() {
             theme: "material-ocean",
             value: defaultEditorContents,
             lineNumbers: true,
+            gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"],
+            autoCloseBrackets: true,
+            matchBrackets: true,
+            highlightSelectionMatches: true,
+            foldGutter: true,
           }
         );
-        console.log(model.elementAt("text").value());
+        setHeheEditor(editor);
+        // console.log(editor);
+        // console.log(editRef.current.editor);
+
+        // const editor = editRef.current.editor;
+        // console.log(editor);
+        // console.log(myEditor);
+
+        // console.log(model.elementAt("text").value());
         const adapter = new CodeMirrorConvergenceAdapter(
           editor,
           model.elementAt("text")
@@ -112,28 +132,40 @@ function App() {
       });
   }, []);
 
-  const [code, setCode] = useState("");
+  const changemode = () => {
+    console.log(heheEditor);
+    heheEditor.setOption("mode", "text/x-c++src");
+    heheEditor.setOption("theme", "neat");
+  };
+
   return (
     <div>
-      {/* <CodeMirror //output
+      {/* <ReactCodeMirror //output
         id="my-codemirror"
         name="code"
         value={code}
+        ref={editRef}
         editorDidMount={(editor) => {
           editor.setSize("", "40vh");
+          console.log(editor);
+          setMyEditor(editor);
         }}
+        autoCursor={true}
         options={{
           mode: "text/x-c++src",
           theme: "material-ocean",
-          // lineNumbers: true,
+          lineNumbers: true,
           // gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"],
           // matchBrackets: true,
           // autoCloseBrackets: true,
         }}
         onBeforeChange={(editor, data, value) => {
+          console.log(editor, data, value);
           setCode(value);
         }}
+        onChange={(editor, data, value) => {}}
       /> */}
+
       <div className="wrapper">
         {/* Page Content */}
         <div id="content">
@@ -157,6 +189,7 @@ function App() {
           </div>
         </div>
       </div>
+      <button onClick={changemode}>Click to change mode</button>
     </div>
   );
 }
