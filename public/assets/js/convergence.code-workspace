@@ -1,0 +1,16 @@
+{
+  "folders": [
+	{
+		"path": "..\\..\\..\\my-editor"
+	},
+	{
+		"path": "..\\.."
+	},
+	{
+		"path": "..\\..\\..\\CodeIO-IDE"
+	}
+],
+  "settings": {
+    "liveServer.settings.multiRootWorkspaceName": "colab-edit-take101"
+  }
+}
